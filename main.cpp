@@ -90,8 +90,9 @@ int main()
 						Collision::BoundingBoxTest(right_box, *b.bullet)){
 				// this is woefully incorrect.
 				// TODO left and right richoche math
-				b.angle = abs(180 - b.angle);
-				b.update_velocity();
+			  b.angle = -b.angle;
+			  b.angle += 3.141592;
+			  b.update_velocity();
 				b.update();
 				//b.velocity->x = -b.velocity->x;
 			}

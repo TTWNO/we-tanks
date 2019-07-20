@@ -20,6 +20,7 @@ Bullet::Bullet(float new_angle, const sf::Vector2f& starting_position, sf::Textu
 	velocity = new sf::Vector2f(10 * cos(new_angle), 10 * sin(new_angle));
 	
 	bullet = new sf::Sprite();
+    bullet->setOrigin(500 /2.f, 582/2.f);
 	bullet->setTexture(texture);
 	bullet->setPosition(starting_position);
 	//bullet->setFillColor(sf::Color::Red);

@@ -1,9 +1,7 @@
-CC=g++
+default: linux
 
-default: all
+linux:
+	g++ main.cpp -L./SFML-linux-gcc/lib -I./SFML-linux-gcc/include -lsfml-system -lsfml-graphics -lsfml-window -o main.out
 
-all:
-	$(CC) main.cpp -L./SFML-2.5.1/lib -I./SFML-2.5.1/include -lsfml-system -lsfml-graphics -lsfml-window -o main.out
-
-run:
-	LD_LIBRARY_PATH=./SFML-2.5.1/lib ./main.out
+linux-run:
+	LD_LIBRARY_PATH=./SFML-linux-gcc/lib ./main.out

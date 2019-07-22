@@ -1,7 +1,8 @@
 default: linux
 
 linux:
-	g++ main.cpp -L./SFML-linux-gcc/lib -I./SFML-linux-gcc/include -lsfml-system -lsfml-graphics -lsfml-window -o main.out
+	g++ -c main.cpp -I./SFML-linux/include
+	g++ main.o -o we-tanks -L./SFML-linux/lib -lsfml-system -lsfml-graphics -lsfml-window
 
 linux-run:
-	LD_LIBRARY_PATH=./SFML-linux-gcc/lib ./main.out
+	LD_LIBRARY_PATH=./SFML-linux/lib ./we-tanks

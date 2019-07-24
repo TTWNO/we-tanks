@@ -7,21 +7,53 @@
 
 #define PI 3.14159265
 
+struct Bullet{
+    float velocity;
+    sf::RectangleShape bulletShape;
+
+    void update(){
+    }
+
+    void draw(sf::RenderWindow &rw){
+        rw.draw(bulletShape);
+    }
+};
+
+struct Tank{
+    sf::RectangleShape tank;
+    sf::RectangleShape gun;
+
+    void move(float by_x, float by_y){
+        tank.move(by_x, by_y);
+        gun.move(by_x, by_y); 
+    }
+    void draw(sf::RenderWindow &rw){
+        rw.draw(tank);
+        rw.draw(gun);
+    }
+};
+
+
 int main()
 {
     float velocity = 8;
     
     sf::RenderWindow window(sf::VideoMode(300, 300), "SFML works!");
     window.setVerticalSyncEnabled(true);
-    const sf::Vector2f size(100.f, 100.f);
-    const sf::Vector2f gun_size(75.f, 25.f);
+    window.setFramerateLimit(60);
+    const sf::Vector2f size(50.f, 50.f);
+    const sf::Vector2f gun_size(50.f, 10.f);
     sf::RectangleShape shape(size);
     sf::RectangleShape gun_shape(gun_size);
 
+    bool enter_pressed = false;
+
+    gun_shape.setFillColor(sf::Color::Cyan);
     shape.setFillColor(sf::Color::Blue);
-    shape.setFillColor(sf::Color::Red);
-    gun_shape.setPosition(50.f, 50.f);
-    gun_shape.setOrigin(0.f, 12.5f);
+    gun_shape.setPosition(25.f, 25.f);
+    gun_shape.setOrigin(0.f, 5.0f);
+
+    Tank t1{shape, gun_shape};
 
     while (window.isOpen()){
         sf::Vector2u size = window.getSize();
@@ -34,32 +66,35 @@ int main()
 
         // Keyboard events
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-            shape.move(velocity, 0);
-            gun_shape.move(velocity, 0);
+            t1.move(velocity, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-            shape.move(-velocity, 0);
-            gun_shape.move(-velocity, 0);
+            t1.move(-velocity, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-            shape.move(0, -velocity);
-            gun_shape.move(0, -velocity);
+            t1.move(0, -velocity);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-            shape.move(0, velocity);
-            gun_shape.move(0, velocity);
+            t1.move(0, velocity);
+        }
+        // only activate 2nd if {}s once per key press, not constantly.
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+            if (!enter_pressed){
+                enter_pressed = true;
+                std::cout << "Bullet!" << std::endl;
+            }
+        } else if (enter_pressed) {
+            enter_pressed = false;
         }
 
         sf::Vector2i mp = sf::Mouse::getPosition(window);
-        float diff3 = atan2((float)mp.y - gun_shape.getPosition().y,
-                            (float)mp.x - gun_shape.getPosition().x) * 180 / PI;
-        gun_shape.setRotation(diff3);
+        float diff3 = atan2((float)mp.y - t1.gun.getPosition().y,
+                            (float)mp.x - t1.gun.getPosition().x) * 180 / PI;
+        t1.gun.setRotation(diff3);
 
         window.clear();
-        window.draw(shape);
-        window.draw(gun_shape);
+        t1.draw(window);
         window.display();
     }
-
     return 0;
 }

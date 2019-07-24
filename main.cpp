@@ -4,35 +4,9 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics.hpp>
+#include "tank.hpp"
 
 #define PI 3.14159265
-
-struct Bullet{
-    float velocity;
-    sf::RectangleShape bulletShape;
-
-    void update(){
-    }
-
-    void draw(sf::RenderWindow &rw){
-        rw.draw(bulletShape);
-    }
-};
-
-struct Tank{
-    sf::RectangleShape tank;
-    sf::RectangleShape gun;
-
-    void move(float by_x, float by_y){
-        tank.move(by_x, by_y);
-        gun.move(by_x, by_y); 
-    }
-    void draw(sf::RenderWindow &rw){
-        rw.draw(tank);
-        rw.draw(gun);
-    }
-};
-
 
 int main()
 {
@@ -53,7 +27,7 @@ int main()
     gun_shape.setPosition(25.f, 25.f);
     gun_shape.setOrigin(0.f, 5.0f);
 
-    Tank t1{shape, gun_shape};
+    Tank t1(shape, gun_shape);
 
     while (window.isOpen()){
         sf::Vector2u size = window.getSize();
@@ -93,7 +67,7 @@ int main()
         t1.gun.setRotation(diff3);
 
         window.clear();
-        t1.draw(window);
+        window.draw(t1);
         window.display();
     }
     return 0;

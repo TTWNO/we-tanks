@@ -1,15 +1,17 @@
 #include <iostream>
 #include <stdio.h>
 #include <math.h>
+#include <vector>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics.hpp>
 #include "tank.hpp"
-
-#define PI 3.14159265
+#include "bullet.hpp"
+#include "collision.cpp"
 
 int main()
 {
+	std::vector<Bullet> bullets = {};
     float velocity = 8;
     
     sf::RenderWindow window(sf::VideoMode(300, 300), "SFML works!");
@@ -17,9 +19,12 @@ int main()
     window.setFramerateLimit(60);
     const sf::Vector2f size(50.f, 50.f);
     const sf::Vector2f gun_size(50.f, 10.f);
+	const sf::Vector2f midbox_size(100.f, 100.f);
     sf::RectangleShape shape(size);
     sf::RectangleShape gun_shape(gun_size);
+	sf::RectangleShape midbox(midbox_size);
 
+	midbox.setPosition(300, 300);
     bool enter_pressed = false;
 
     gun_shape.setFillColor(sf::Color::Cyan);
@@ -37,6 +42,24 @@ int main()
                 window.close();
             }
         }
+		// set variables for loop
+        sf::Vector2i mp = sf::Mouse::getPosition(window);
+		float ydiff = (float)mp.y - t1.gun.getPosition().y;
+		float xdiff = (float)mp.x - t1.gun.getPosition().x;
+	
+        float gun_radeons = atan2((float)mp.y - t1.gun.getPosition().y,
+                            (float)mp.x - t1.gun.getPosition().x);
+		float gun_angle = gun_radeons * 180 / PI;
+        t1.gun.setRotation(gun_angle);
+		for (Bullet b : bullets){
+			b.update();
+			if (Collision::BoundingBoxTest(*b.bullet, midbox)){
+				b.velocity.x = -b.velocity.x;
+				b.velocity.y = -b.velocity.y;
+				b.bullet->rotate(90);
+				b.update();
+			}
+		}
 
         // Keyboard events
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
@@ -55,19 +78,19 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
             if (!enter_pressed){
                 enter_pressed = true;
-                std::cout << "Bullet!" << std::endl;
+				bullets.push_back(Bullet(gun_radeons, t1.gun.getPosition()));
             }
         } else if (enter_pressed) {
             enter_pressed = false;
         }
 
-        sf::Vector2i mp = sf::Mouse::getPosition(window);
-        float diff3 = atan2((float)mp.y - t1.gun.getPosition().y,
-                            (float)mp.x - t1.gun.getPosition().x) * 180 / PI;
-        t1.gun.setRotation(diff3);
 
         window.clear();
         window.draw(t1);
+		for (Bullet b : bullets){
+			window.draw(b);
+		}
+		window.draw(midbox);
         window.display();
     }
     return 0;

@@ -1,6 +1,6 @@
 CXXFLAGS=-O2 -march=native
 
-OBJS=tank.o
+OBJS=tank.o bullet.o
 INCS=-I./SFML-linux-gcc/include
 LIBS=-lsfml-system -lsfml-graphics -lsfml-window
 CXXC=g++
@@ -8,6 +8,7 @@ CXXC=g++
 default: linux
 
 linux:
+	$(CXXC) $(CXXFLAGS) -c bullet.cpp $(INCS)
 	$(CXXC) $(CXXFLAGS) -c tank.cpp $(INCS)
 	$(CXXC) $(CXXFLAGS) -c main.cpp $(INCS)
 	$(CXXC) $(CXXFLAGS) $(OBJS) main.o -L./SFML-linux-gcc/lib $(LIBS) -o we-tanks

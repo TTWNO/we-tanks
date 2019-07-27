@@ -30,6 +30,27 @@ int main()
     sf::RectangleShape shape(size);
     sf::RectangleShape gun_shape(gun_size);
 	sf::Sprite midbox;
+	sf::Sprite top_box;
+	sf::Sprite left_box;
+	sf::Sprite right_box;
+	sf::Sprite bot_box;
+
+	sf::Rect<int> text_rect(0, 0, 100, 5);
+	sf::Rect<int> text_srect(0, 0, 5, 100);
+
+	top_box.setTexture(white_square_texture);
+	top_box.setTextureRect(text_rect);
+	top_box.setPosition(300, 300);
+	left_box.setTexture(white_square_texture);
+	left_box.setTextureRect(text_srect);
+	left_box.setPosition(300, 300);
+	bot_box.setTexture(white_square_texture);
+	bot_box.setTextureRect(text_rect);
+	bot_box.setPosition(300, 395);
+	right_box.setTexture(white_square_texture);
+	right_box.setTextureRect(text_srect);
+	right_box.setPosition(395, 300);
+
 	midbox.setTexture(white_square_texture);
 	midbox.setPosition(300, 300);
     bool enter_pressed = false;
@@ -60,9 +81,19 @@ int main()
         t1.gun.setRotation(gun_angle);
 		for (Bullet b : bullets){
 			b.update();
-			if (Collision::BoundingBoxTest(midbox, *b.bullet)){
+			if (Collision::BoundingBoxTest(top_box, *b.bullet) ||
+					Collision::BoundingBoxTest(bot_box, *b.bullet)){
 				b.angle = -b.angle;
 				b.update_velocity();
+				b.update();
+			} else if (Collision::BoundingBoxTest(left_box, *b.bullet) ||
+						Collision::BoundingBoxTest(right_box, *b.bullet)){
+				// this is woefully incorrect.
+				// TODO left and right richoche math
+				b.angle = abs(180 - b.angle);
+				b.update_velocity();
+				b.update();
+				//b.velocity->x = -b.velocity->x;
 			}
 		}
 
@@ -95,7 +126,10 @@ int main()
 		for (Bullet b : bullets){
 			window.draw(b);
 		}
-		window.draw(midbox);
+		window.draw(top_box);
+		window.draw(left_box);
+		window.draw(bot_box);
+		window.draw(right_box);
         window.display();
     }
     return 0;

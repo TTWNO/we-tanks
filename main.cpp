@@ -9,9 +9,16 @@
 #include "bullet.hpp"
 #include "collision.cpp"
 
+#define PI 3.1415926535
+
 int main()
 {
 	std::vector<Bullet> bullets = {};
+	sf::Texture bullet_texture;
+	sf::Texture white_square_texture;
+	bullet_texture.loadFromFile("bullet.png");
+	white_square_texture.loadFromFile("ws.jpg");
+	
     float velocity = 8;
     
     sf::RenderWindow window(sf::VideoMode(300, 300), "SFML works!");
@@ -22,8 +29,8 @@ int main()
 	const sf::Vector2f midbox_size(100.f, 100.f);
     sf::RectangleShape shape(size);
     sf::RectangleShape gun_shape(gun_size);
-	sf::RectangleShape midbox(midbox_size);
-
+	sf::Sprite midbox;
+	midbox.setTexture(white_square_texture);
 	midbox.setPosition(300, 300);
     bool enter_pressed = false;
 
@@ -53,11 +60,9 @@ int main()
         t1.gun.setRotation(gun_angle);
 		for (Bullet b : bullets){
 			b.update();
-			if (Collision::BoundingBoxTest(*b.bullet, midbox)){
-				b.velocity.x = -b.velocity.x;
-				b.velocity.y = -b.velocity.y;
-				b.bullet->rotate(90);
-				b.update();
+			if (Collision::BoundingBoxTest(midbox, *b.bullet)){
+				b.angle = -b.angle;
+				b.update_velocity();
 			}
 		}
 
@@ -78,7 +83,7 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
             if (!enter_pressed){
                 enter_pressed = true;
-				bullets.push_back(Bullet(gun_radeons, t1.gun.getPosition()));
+				bullets.push_back(Bullet(gun_radeons, t1.gun.getPosition(), bullet_texture));
             }
         } else if (enter_pressed) {
             enter_pressed = false;

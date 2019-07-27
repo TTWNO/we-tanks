@@ -5,14 +5,17 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 class Bullet : public sf::Drawable {
 public:
-  sf::RectangleShape* bullet;
-  sf::Vector2f velocity;
+  float angle;
+  sf::Sprite* bullet;
+  sf::Vector2f* velocity;
 
-  Bullet(float angle, const sf::Vector2f& position);
+  Bullet(float angle, const sf::Vector2f& position, sf::Texture& t);
   void update();
+  void update_velocity();
 private:
   virtual void draw(sf::RenderTarget& rt, sf::RenderStates render_states) const;
 };

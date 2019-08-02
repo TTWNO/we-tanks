@@ -8,12 +8,14 @@
 #include "tank.hpp"
 #include "bullet.hpp"
 #include "collision.cpp"
+#include "box.hpp"
 
 #define PI 3.1415926535
 
 int main()
 {
 	std::vector<Bullet> bullets = {};
+	std::vector<Box> boxes = {};
 	sf::Texture bullet_texture;
 	sf::Texture white_square_texture;
 	bullet_texture.loadFromFile("bullet.png");
@@ -26,33 +28,19 @@ int main()
     window.setFramerateLimit(60);
     const sf::Vector2f size(50.f, 50.f);
     const sf::Vector2f gun_size(50.f, 10.f);
-	const sf::Vector2f midbox_size(100.f, 100.f);
+	const sf::Vector2f box_startpos(200.f, 200.f);
+	const sf::Vector2f box_size(100.f, 100.f);
+	const sf::Vector2f box2_startpos(400.f, 250.f);
+	const sf::Vector2f box2_size(100.f, 100.f);
+	
+	Box box(box_startpos, box_size, white_square_texture, 1);
+	Box box2(box2_startpos, box2_size, white_square_texture, 1);
+
+	boxes.push_back(box);
+	boxes.push_back(box2);
+
     sf::RectangleShape shape(size);
     sf::RectangleShape gun_shape(gun_size);
-	sf::Sprite midbox;
-	sf::Sprite top_box;
-	sf::Sprite left_box;
-	sf::Sprite right_box;
-	sf::Sprite bot_box;
-
-	sf::Rect<int> text_rect(0, 0, 100, 5);
-	sf::Rect<int> text_srect(0, 0, 5, 100);
-
-	top_box.setTexture(white_square_texture);
-	top_box.setTextureRect(text_rect);
-	top_box.setPosition(300, 300);
-	left_box.setTexture(white_square_texture);
-	left_box.setTextureRect(text_srect);
-	left_box.setPosition(300, 300);
-	bot_box.setTexture(white_square_texture);
-	bot_box.setTextureRect(text_rect);
-	bot_box.setPosition(300, 395);
-	right_box.setTexture(white_square_texture);
-	right_box.setTextureRect(text_srect);
-	right_box.setPosition(395, 300);
-
-	midbox.setTexture(white_square_texture);
-	midbox.setPosition(300, 300);
     bool enter_pressed = false;
 
     gun_shape.setFillColor(sf::Color::Cyan);
@@ -79,24 +67,33 @@ int main()
                             (float)mp.x - t1.gun.getPosition().x);
 		float gun_angle = gun_radeons * 180 / PI;
         t1.gun.setRotation(gun_angle);
-		for (Bullet b : bullets){
-			b.update();
-			if (Collision::BoundingBoxTest(top_box, *b.bullet) ||
-					Collision::BoundingBoxTest(bot_box, *b.bullet)){
-				b.angle = -b.angle;
-				b.update_velocity();
+
+		for (auto& b : bullets){
+			sf::Sprite bs = *b.bullet;
+			for (auto& bo : boxes){
+				if (bo.collides_on_top(bs) || bo.collides_on_bottom(bs)){
+					b.angle = -b.angle;
+					b.update_velocity();
+				} else if (bo.collides_on_left(bs) || bo.collides_on_right(bs)){
+					b.angle = -b.angle;
+					// reverses angle in radeons by adding pi
+					b.angle += 3.141592;
+					b.update_velocity();
+				}
 				b.update();
-			} else if (Collision::BoundingBoxTest(left_box, *b.bullet) ||
-						Collision::BoundingBoxTest(right_box, *b.bullet)){
-				// this is woefully incorrect.
-				// TODO left and right richoche math
-			  b.angle = -b.angle;
-			  b.angle += 3.141592;
-			  b.update_velocity();
-				b.update();
-				//b.velocity->x = -b.velocity->x;
 			}
 		}
+
+		// remove bullets when no ricoches are left
+		bullets.erase(
+			std::remove_if(
+				bullets.begin(),
+				bullets.end(),
+				[](Bullet const& b){return b.ricoches_left <= 0;}
+			),
+			bullets.end()
+		);
+		std::cout << "RL: " << bullets.size() << std::endl;
 
         // Keyboard events
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
@@ -111,11 +108,11 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
             t1.move(0, velocity);
         }
-        // only activate 2nd if {}s once per key press, not constantly.
+        // only activate inner if once per key press, not constantly.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
             if (!enter_pressed){
                 enter_pressed = true;
-				bullets.push_back(Bullet(gun_radeons, t1.gun.getPosition(), bullet_texture));
+				bullets.push_back(Bullet(gun_radeons, t1.gun.getPosition(), bullet_texture, 2));
             }
         } else if (enter_pressed) {
             enter_pressed = false;
@@ -127,10 +124,9 @@ int main()
 		for (Bullet b : bullets){
 			window.draw(b);
 		}
-		window.draw(top_box);
-		window.draw(left_box);
-		window.draw(bot_box);
-		window.draw(right_box);
+		for (Box b : boxes){
+			window.draw(b);
+		}
         window.display();
     }
     return 0;

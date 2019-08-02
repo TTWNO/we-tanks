@@ -13,12 +13,15 @@ void Bullet::update_velocity(){
 	velocity->y = 10 * sin(angle);
 	bullet->setRotation(angle * 180 / 3.14159265);
 	bullet->rotate(90);
+	this->ricoches_left--;
 }
 
-Bullet::Bullet(float new_angle, const sf::Vector2f& starting_position, sf::Texture& texture){
+Bullet::Bullet(float new_angle, const sf::Vector2f& starting_position, sf::Texture& texture, int ricoches){
 	angle = new_angle;
 	velocity = new sf::Vector2f(10 * cos(new_angle), 10 * sin(new_angle));
-	
+
+	ricoches_left = ricoches;	
+
 	bullet = new sf::Sprite();
     bullet->setOrigin(500 /2.f, 582/2.f);
 	bullet->setTexture(texture);

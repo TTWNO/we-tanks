@@ -12,8 +12,9 @@ public:
   float angle;
   sf::Sprite* bullet;
   sf::Vector2f* velocity;
+  int ricoches_left;
 
-  Bullet(float angle, const sf::Vector2f& position, sf::Texture& t);
+  Bullet(float angle, const sf::Vector2f& position, sf::Texture& t, int richoches);
   void update();
   void update_velocity();
 private:

@@ -1,3 +1,6 @@
+#ifndef BOX_H
+#define BOX_H
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -16,9 +19,12 @@ class Box : public sf::Drawable {
 
   bool collides_on_left(sf::Sprite& sp);
   bool collides_on_top(sf::Sprite& sp);
-  bool collision_on_right(sf::Sprite& sp);
-  bool collision_on_bottom(sf::Sprite& sp);
+  bool collides_on_right(sf::Sprite& sp);
+  bool collides_on_bottom(sf::Sprite& sp);
 
-  Box(sf::Vector2f& pos, sf::Vector2f& size, sf::Texture& texture, int thickness);
-  virtual void draw(sf::RenderTarget& rt, sf::RenderStates& rss) const;
+  Box(const sf::Vector2f& pos, const sf::Vector2f& size, sf::Texture& texture, int thickness);
+ private:
+  virtual void draw(sf::RenderTarget& rt, sf::RenderStates rss) const;
 };
+
+#endif

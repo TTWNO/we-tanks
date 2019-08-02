@@ -1,6 +1,6 @@
 CXXFLAGS=-O2 -march=native
 
-OBJS=tank.o bullet.o
+OBJS=tank.o bullet.o box.o
 INCS=-I./SFML-linux-gcc/include
 LIBS=-lsfml-system -lsfml-graphics -lsfml-window
 CXXC=g++

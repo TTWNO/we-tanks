@@ -12,7 +12,7 @@ void Bullet::update_velocity(){
 	velocity->x = 10 * cos(angle);
 	velocity->y = 10 * sin(angle);
 	bullet->setRotation(angle * 180 / 3.14159265);
-	bullet->rotate(90);
+	//bullet->rotate(90);
 	this->ricoches_left--;
 }
 
@@ -23,11 +23,11 @@ Bullet::Bullet(float new_angle, const sf::Vector2f& starting_position, sf::Textu
 	ricoches_left = ricoches;	
 
 	bullet = new sf::Sprite();
-    bullet->setOrigin(500 /2.f, 582/2.f);
+    bullet->setOrigin(1024 /4.f, 768/2.f);
 	bullet->setTexture(texture);
 	bullet->setPosition(starting_position);
 	//bullet->setFillColor(sf::Color::Red);
 	bullet->setRotation(angle * 180 / 3.1415926);
-	bullet->rotate(90);
-	bullet->scale(sf::Vector2f(0.05f, 0.05f));
+	//bullet->rotate(90);
+	bullet->scale(sf::Vector2f(0.025f, 0.025f));
 }

@@ -18,7 +18,7 @@ int main()
 	std::vector<Box> boxes = {};
 	sf::Texture bullet_texture;
 	sf::Texture white_square_texture;
-	bullet_texture.loadFromFile("bullet.png");
+	bullet_texture.loadFromFile("bullet5.png");
 	white_square_texture.loadFromFile("ws.jpg");
 	
     float velocity = 8;
@@ -80,8 +80,8 @@ int main()
 					b.angle += 3.141592;
 					b.update_velocity();
 				}
-				b.update();
 			}
+			b.update();
 		}
 
 		// remove bullets when no ricoches are left
@@ -93,7 +93,6 @@ int main()
 			),
 			bullets.end()
 		);
-		std::cout << "RL: " << bullets.size() << std::endl;
 
         // Keyboard events
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
